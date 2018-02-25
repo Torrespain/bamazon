@@ -71,7 +71,7 @@ function customerStart(){
 		}
 		console.log(table.toString());
 	});
-	setTimeout(function(){ inquireUser(); }, 1);
+	setTimeout(function(){ inquireUser(); }, 5);
 }
 
 function inquireUser(){
@@ -80,15 +80,36 @@ function inquireUser(){
 		name: "ID",
 		type: "input",
 		message: "\nPlease select the ID of the product\n",
+		validate: function(value){
+			if (isNaN(value) === false) {
+            	return true;
+        	}
+        	return false;
+		}
 	},
 	{
 		name: "number",
 		type: "input",
 		message: "How many would you like? (Q to quit)\n",
+		validate: function(value){
+			if (isNaN(value) === false || value==="Q") {
+            	return true;
+        	}
+        	return false;
+		}
 	}]).then(function(answer){
-	
-		checkStock(answer.ID, answer.number )
 
+		if(answer.number>0){
+			checkStock(answer.ID, answer.number );
+		}
+		else if (answer.number==="Q"){
+			console.log("\nSee you soon!\n");
+			connection.end();
+		}
+		else{
+			console.log("Please introduce a quantity higher than zero");
+			inquireUser();
+		}
 	});
 }
 
@@ -103,17 +124,16 @@ function checkStock(ID, quantity){
 		var newQty=res[0].stock_quantity-quantity;
 		if (newQty>=0) {
 
-			updateStock(ID, newQty);
+			updateStock(ID, newQty, quantity);
 		}
 		else{
 			console.log("Not enough stock!\n");
 			inquireUser();
 		}
-
 	})
 }
 
-function updateStock(ID, newQty){
+function updateStock(ID, newQty, purQty){
 	var query="UPDATE products SET ?  WHERE ?";
 	connection.query(query, [{
 		stock_quantity: newQty
@@ -125,8 +145,11 @@ function updateStock(ID, newQty){
 			console.log(err);
 		}
 		else{
-			console.log("\nThank you for your purchase\n");
-			continueBuying();
+			connection.query("SELECT product_name FROM products WHERE ?",{id:ID},function(err, res){
+				console.log("\nThank you for your purchase\n");
+				console.log("You adquired "+purQty+" units of "+res[0].product_name+"\n");
+			})
+			setTimeout(function(){ continueBuying(); }, 5);
 		}
 	});
 }
