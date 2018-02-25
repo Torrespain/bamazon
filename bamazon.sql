@@ -13,6 +13,9 @@ CREATE TABLE products (
 	PRIMARY KEY(id)
 );
 
+
+SELECT * FROM products;
+
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("Ghostek soDrop 2 Headphones", "Electronics", 69.95, 10), 
 	("Beats Solo3  Headphones", "Electronics",199.99, 8), 
