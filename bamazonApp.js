@@ -120,12 +120,12 @@ function checkStock(ID, quantity){
 		connection.end();
 		return;
 	}
-	var query="SELECT stock_quantity FROM products WHERE ?";
+	var query="SELECT stock_quantity, price FROM products WHERE ?";
 	connection.query(query, {id: ID}, function(err,res){
 		var newQty=res[0].stock_quantity-quantity;
 		if (newQty>=0) {
 
-			updateStock(ID, newQty, quantity);
+			updateStock(ID, newQty, quantity, res[0].price);
 		}
 		else{
 			console.log("Not enough stock!\n");
@@ -134,7 +134,7 @@ function checkStock(ID, quantity){
 	})
 }
 
-function updateStock(ID, newQty, purQty){
+function updateStock(ID, newQty, purQty, price){
 	var query="UPDATE products SET ?  WHERE ?";
 	connection.query(query, [{
 		stock_quantity: newQty
@@ -149,6 +149,8 @@ function updateStock(ID, newQty, purQty){
 			connection.query("SELECT product_name FROM products WHERE ?",{id:ID},function(err, res){
 				console.log("\nThank you for your purchase\n");
 				console.log("You adquired "+purQty+" units of "+res[0].product_name+"\n");
+				var totalPrice=parseInt(price)*parseInt(purQty);
+				console.log("Total price: $"+ totalPrice);
 			})
 			setTimeout(function(){ continueBuying(); }, 5);
 		}
