@@ -71,8 +71,8 @@ function customerStart(){
 			);
 		}
 		console.log(table.toString());
+		inquireUser();
 	});
-	setTimeout(function(){ inquireUser(); }, 5);
 }
 
 function inquireUser(){
@@ -150,9 +150,9 @@ function updateStock(ID, newQty, purQty, price){
 				console.log("\nThank you for your purchase\n");
 				console.log("You adquired "+purQty+" units of "+res[0].product_name+"\n");
 				var totalPrice=parseInt(price)*parseInt(purQty);
-				console.log("Total price: $"+ totalPrice)
+				console.log("Total price: $"+ totalPrice+"\n");
+				continueBuying();
 			})
-			setTimeout(function(){ continueBuying(); }, 5);
 		}
 	});
 }
@@ -233,7 +233,7 @@ function managerStart(){
 function stockCheck(){
 	var table = new Table({
 	  chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
-	         , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝'
+	         , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝ \n'
 	         , 'left': '║' , 'left-mid': '╟' , 'mid': '─' , 'mid-mid': '┼'
 	         , 'right': '║' , 'right-mid': '╢' , 'middle': '│' }
 	});
@@ -253,14 +253,14 @@ function stockCheck(){
 			);
 		}
 		console.log(table.toString());
+		managerStart();
 	});
-	setTimeout(function(){ managerStart(); }, 5);
 }
 
 function lowInventoryCheck(){
 	var table = new Table({
 	  chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
-	         , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝'
+	         , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝ \n'
 	         , 'left': '║' , 'left-mid': '╟' , 'mid': '─' , 'mid-mid': '┼'
 	         , 'right': '║' , 'right-mid': '╢' , 'middle': '│' }
 	});
@@ -281,8 +281,8 @@ function lowInventoryCheck(){
 			}
 		}
 		console.log(table.toString());
+		managerStart();
 	});
-	setTimeout(function(){ managerStart(); }, 5);
 }
 
 function updateInventory(){
@@ -308,8 +308,8 @@ function updateInventory(){
 			);
 		}
 		console.log(table.toString());
+		inquireManager();
 	});
-	setTimeout(function(){ inquireManager(); }, 5);
 }
 
 
@@ -363,8 +363,8 @@ function addStock(ID, quantity){
 			connection.query("SELECT product_name FROM products WHERE ?",{id:ID},function(err, res){
 				console.log("\nQuantity updated\n");
 				console.log("Updated stock of "+res[0].product_name+"\n")+": "+quantity+" units";
+				managerStart();
 			})
-			setTimeout(function(){ managerStart(); }, 5);
 		}
 	});
 }
