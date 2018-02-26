@@ -37,12 +37,12 @@ function start(){
 				break;
 
 			case "Administrator":
-				console.log("Under developement, please contact your developer...\n")
+				console.log("\nUnder developement, please contact your developer...\n")
 				start()
 				break;
 
 			case "Quit":
-				console.log("See you soon!")
+				console.log("\nSee you soon!\n")
 				connection.end();
 				break;
 		}
@@ -56,7 +56,7 @@ function customerStart(){
 	         , 'left': '║' , 'left-mid': '╟' , 'mid': '─' , 'mid-mid': '┼'
 	         , 'right': '║' , 'right-mid': '╢' , 'middle': '│' }
 	});
-
+	console.log("\nLoading...")
 	table.push(
 			["Product ID", "Product Name", "Department", "Price", "Stock"]
 		);
@@ -176,7 +176,12 @@ function continueBuying(){
 //-----------------Manager logic--------------------------------
 
 function managerStart(){
-	inquirer.prompt({
+	inquirer.prompt([{
+		name: "password",
+		type: 'password',
+		message: "Please insert password (the password is 1234)"
+	},
+	{
 		name: "options",
 		type: "list",
 		message: "What would you like to do?",
@@ -187,27 +192,60 @@ function managerStart(){
 			"Add New Product",
 			"Quit",
 		]
-	}).then(function(answer){
-		switch(answer.options){
-			case "View products for sale":
-				// saleProducts();
-				break;
-			case "View low Inventory":
-				lowInventoryCheck();
-				break;
-			case "Update Inventory":
-				updateInventory();
-				break;
-			case "Add New Product":
-				addProduct();
-				break;
-			case "Quit":
-				console.log("\nSee you soon!");
-				connection.end();
-				break;
+	}]).then(function(answer){
+		if (answer.password==="1234") {
+			switch(answer.options){
+				case "View products for sale":
+					stockCheck();
+					break;
+				case "View low Inventory":
+					lowInventoryCheck();
+					break;
+				case "Update Inventory":
+					updateInventory();
+					break;
+				case "Add New Product":
+					addProduct();
+					break;
+			}
+		}
+		else if(answer.options==="Quit"){
+			console.log("\nSee you soon!\n");
+			connection.end();
+		}
+		else{
+			console.log("\nWrong password, going back to the main menu...\n");
+			managerStart();
 		}
 	});
 } 
+
+function stockCheck(){
+	var table = new Table({
+	  chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
+	         , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝'
+	         , 'left': '║' , 'left-mid': '╟' , 'mid': '─' , 'mid-mid': '┼'
+	         , 'right': '║' , 'right-mid': '╢' , 'middle': '│' }
+	});
+
+	console.log("\nLoading Inventory...")
+	table.push(
+			["Product ID", "Product Name", "Department", "Price", "Stock"]
+		);
+
+	var query = "SELECT id, product_name, department_name, price, stock_quantity FROM products";
+
+	connection.query(query, function(err,res){
+		for (var i = 0; i < res.length; i++) {
+
+			table.push(
+			    [res[i].id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+			);
+		}
+		console.log(table.toString());
+	});
+	setTimeout(function(){ managerStart(); }, 5);
+}
 
 function lowInventoryCheck(){
 	var table = new Table({
@@ -217,6 +255,7 @@ function lowInventoryCheck(){
 	         , 'right': '║' , 'right-mid': '╢' , 'middle': '│' }
 	});
 
+	console.log("\nLoading low Inventory...");
 	table.push(
 			["Product ID", "Product Name", "Department", "Price", "Stock"]
 		);
