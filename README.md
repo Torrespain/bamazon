@@ -23,3 +23,5 @@ This mode allows the user to:
 - View low inventory for stock under qty: 4.
 - Add or remove inventory quantities.
 - Add a new product to the list.
+
+<img src=assets/managerGif.gif>
