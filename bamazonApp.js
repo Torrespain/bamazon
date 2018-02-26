@@ -33,7 +33,7 @@ function start(){
 				break;
 
 			case "Manager":
-				managerStart();
+				managerAccess();
 				break;
 
 			case "Administrator":
@@ -150,7 +150,7 @@ function updateStock(ID, newQty, purQty, price){
 				console.log("\nThank you for your purchase\n");
 				console.log("You adquired "+purQty+" units of "+res[0].product_name+"\n");
 				var totalPrice=parseInt(price)*parseInt(purQty);
-				console.log("Total price: $"+ totalPrice);
+				console.log("Total price: $"+ totalPrice)
 			})
 			setTimeout(function(){ continueBuying(); }, 5);
 		}
@@ -176,13 +176,24 @@ function continueBuying(){
 }
 
 //-----------------Manager logic--------------------------------
-
-function managerStart(){
-	inquirer.prompt([{
+function managerAccess(){
+	inquirer.prompt({
 		name: "password",
 		type: 'password',
 		message: "Please insert password (the password is 1234)"
-	},
+	}).then(function(answer){
+		if(answer.password!=="1234"){
+			console.log("\nWrong password, going back to main manu\n");
+			start();
+		}
+		else{
+			managerStart()
+		}
+	});
+}
+
+function managerStart(){
+	inquirer.prompt(
 	{
 		name: "options",
 		type: "list",
@@ -194,8 +205,12 @@ function managerStart(){
 			"Add New Product",
 			"Quit",
 		]
-	}]).then(function(answer){
-		if (answer.password==="1234") {
+	}).then(function(answer){
+		if(answer.options==="Quit"){
+			console.log("\nSee you soon!\n");
+			connection.end();
+		}
+		else{
 			switch(answer.options){
 				case "View products for sale":
 					stockCheck();
@@ -211,14 +226,7 @@ function managerStart(){
 					break;
 			}
 		}
-		else if(answer.options==="Quit"){
-			console.log("\nSee you soon!\n");
-			connection.end();
-		}
-		else{
-			console.log("\nWrong password, going back to the main menu...\n");
-			managerStart();
-		}
+		
 	});
 } 
 
